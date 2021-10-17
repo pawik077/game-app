@@ -52,5 +52,5 @@ body {
 
 .inactiveCircle {
 	background-color: black;
-	border-color: white;
+	/* border-color: white; */
 }
