@@ -5,6 +5,8 @@ import Login from "./Login"
 import Home from "./Home"
 import CircleGame from "./circleGame"
 
+const CLIENT_ID = '479916084496-dp7jkcmdb7k4evs23grf0sotrb0nfo5p.apps.googleusercontent.com'
+
 class App extends React.Component {
 	constructor(props) {
 		super(props)
@@ -15,7 +17,7 @@ class App extends React.Component {
 	initGoogleSignIn() {
 		window.gapi.load('auth2', () => {
 			window.gapi.auth2.init({
-				client_id: '479916084496-dp7jkcmdb7k4evs23grf0sotrb0nfo5p.apps.googleusercontent.com'
+				client_id: CLIENT_ID
 			}).then(() => {
 				const authInstance = window.gapi.auth2.getAuthInstance()
 				const isSignedIn = authInstance.isSignedIn.get()
