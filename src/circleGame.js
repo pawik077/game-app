@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import './circleGame.css'
 
 const CIRCLE_SCORE = 1
-const CIRCLE_NUMBER = 15
+const CIRCLE_NUMBER = 20
 
 const Timer = ({ time, interval = 100, onEnd }) => {
 	const [internalTime, setInternalTime] = React.useState(time)
@@ -33,10 +33,10 @@ const Circle = ({ tap, isActive }) =>
 	/>
 
 const Circles = ({ tap, activeId }) =>
-	<>
+	<div id='circles'>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
 			<Circle key={id} tap={tap} isActive={id === activeId} />)}
-	</>
+	</div>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
 
