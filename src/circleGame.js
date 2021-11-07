@@ -2,9 +2,33 @@ import React from "react";
 import ProgressBar from "@ramonak/react-progress-bar"
 import { Link } from "react-router-dom";
 import './circleGame.css'
+const backend = 'http://localhost:4000'
 
 const CIRCLE_SCORE = 1
 const CIRCLE_NUMBER = 20
+
+const sendResults = (eMail, gameID, gameSettings, gameResults) => {
+	let xhr = new XMLHttpRequest()
+	const payload = {
+		eMail: eMail,
+		gameID: gameID,
+		gameSettings: gameSettings,
+		gameResults: gameResults
+	}
+	xhr.open('POST', `${backend}/results`)
+	xhr.onload = () => {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				console.log(xhr.responseText)
+			} else {
+				console.error(xhr.statusText)
+			}
+		}
+	}
+	xhr.onerror = () => console.error(xhr.statusText)
+	xhr.setRequestHeader('Content-Type', 'application/json')
+	xhr.send(JSON.stringify(payload))
+}
 
 const Timer = ({ time, interval = 100, onEnd }) => {
 	const [internalTime, setInternalTime] = React.useState(time)
@@ -65,6 +89,7 @@ const CircleGame = () => {
 	const endGame = () => {
 		setPlaying(false)
 		setFinished(true)
+		sendResults(profile.email, 1, { Setting1: gameTime }, { Result1: score, Result2: (parseFloat(gameTime) * 1000 / score).toFixed(2) })
 	}
 	const backToStart = () => {
 		setPlaying(false)
