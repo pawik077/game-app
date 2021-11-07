@@ -15,7 +15,7 @@ const Home = () => {
 	return (
 		<>
 			<h1>HOME</h1>
-			<h2>Zalogowano jako {profile.name}</h2>
+			<h2>Zalogowano jako {profile.name} ({profile.email})</h2>
 			<div className='logoutButton' onClick={authInstance.signOut}>LOGOUT</div>
 			<div>
 				<nav>

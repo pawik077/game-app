@@ -84,7 +84,7 @@ const CircleGame = () => {
 				{!playing && !finished && (
 					<div className='welcome'>
 						<h1>Polowanie na przedmioty</h1>
-						<h3>Zalogowany jako: {profile.name}</h3>
+						<h3>Zalogowany jako: {profile.name} ({profile.email})</h3>
 						<h3>Najlepszy wynik: </h3>
 						Czas gry: <input value={gameTime} onChange={e => setGameTime(e.target.value)} />
 						<button id='startButton' onClick={ Number.isInteger(parseFloat(gameTime)) ? startGame : null }>Start</button>
