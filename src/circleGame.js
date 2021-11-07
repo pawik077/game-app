@@ -66,6 +66,10 @@ const CircleGame = () => {
 		setPlaying(false)
 		setFinished(true)
 	}
+	const backToStart = () => {
+		setPlaying(false)
+		setFinished(false)
+	}
 	const tap = (points) => {
 		setScore(score + points)
 		let rn
@@ -88,7 +92,7 @@ const CircleGame = () => {
 				)}
 				{playing && (
 					<>
-						<button onClick={endGame}>End</button>
+						<button onClick={backToStart}>End</button>
 						<Timer time={parseFloat(gameTime) * 1000} onEnd={endGame} />
 						<Score value={score}/>
 						<Circles tap={tap} activeId={activeCircleId}/>
