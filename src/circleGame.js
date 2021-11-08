@@ -85,6 +85,7 @@ class CircleGame extends React.Component {
 		this.state = {
 			playing: false,
 			finished: false,
+			countdown: false,
 			score: 0,
 			activeCircleId: 0,
 			gameTime: '',
@@ -104,6 +105,7 @@ class CircleGame extends React.Component {
 		this.setState({
 			playing: true,
 			finished: false,
+			countdown: false,
 			score: 0,
 			activeCircleId: Math.floor(Math.random() * CIRCLE_NUMBER)
 		})
@@ -111,6 +113,7 @@ class CircleGame extends React.Component {
 	endGame = () => {
 		this.setState({
 			playing: false,
+			countdown: false,
 			finished: true
 		})
 		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
@@ -118,7 +121,15 @@ class CircleGame extends React.Component {
 	backToStart = () => {
 		this.setState({
 			playing: false,
+			countdown: false,
 			finished:false
+		})
+	}
+	getReady = () => {
+		this.setState({
+			playing: false,
+			countdown: true,
+			finished: false
 		})
 	}
 	tap = (points) => {
@@ -132,20 +143,26 @@ class CircleGame extends React.Component {
 		return <>
 			<Link to='/'>Powrót</Link>
 			<div className='game'>
-				{!this.state.playing && !this.state.finished && (
+				{!this.state.playing && !this.state.finished && !this.state.countdown && (
 					<div className='welcome'>
 						<h1>Polowanie na przedmioty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} />
-						<button id='startButton' onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.startGame : null}>Start</button>
+						<button id='startButton' onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
+					</div>
+				)}
+				{this.state.countdown && (
+					<div className='countdown'>
+						<h2>Przygotuj się</h2>
+						<Timer time={3000} onEnd={this.startGame}/>
 					</div>
 				)}
 				{this.state.playing && (
 					<>
-						<button onClick={this.backToStart}>End</button>
 						<Timer time={parseFloat(this.state.gameTime) * 1000} onEnd={this.endGame} />
 						<Score value={this.state.score} />
+						<button id='endButton' onClick={this.backToStart}>End</button>
 						<Circles tap={this.tap} activeId={this.state.activeCircleId} />
 					</>
 				)}

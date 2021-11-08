@@ -17,6 +17,13 @@
 	width: 100%;
 }
 
+.countdown {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 50vw
+}
+
 #circles {
 	display: grid;
 	grid-template-columns: repeat(5, 19.5vmin);
@@ -30,6 +37,10 @@
 	margin-right: auto; 
 }
 
+#endButton {
+	float: right
+}
+
 #timer {
 	position: absolute;
 	margin-left: 10px;
@@ -37,7 +48,7 @@
 
 #progressBar {
 	float: right;
-	width: 80%;
+	width: 100%;
 }
 
 body {
