@@ -102,7 +102,7 @@ class CircleGame extends React.Component {
 	}
 	async componentDidMount() {
 		try {
-			const results = await getResults()
+			const results = await getResults({ eMail: this.profile.email, gameID: 1 })
 			const highScore = results.sort((a, b) => (a.Result2 >= b.Result2) ? 1 : -1)[0].Result2
 			this.setState({ highScore: highScore + 'ms'})
 		} catch (error) {
