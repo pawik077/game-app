@@ -9,26 +9,17 @@ const CIRCLE_SCORE = 1
 const CIRCLE_NUMBER = 20
 
 const sendResults = (eMail, gameID, gameSettings, gameResults) => {
-	let xhr = new XMLHttpRequest()
 	const payload = {
 		eMail: eMail,
 		gameID: gameID,
 		gameSettings: gameSettings,
 		gameResults: gameResults
 	}
-	xhr.open('POST', `${backend}/results`)
-	xhr.onload = () => {
-		if (xhr.readyState === 4) {
-			if (xhr.status === 200) {
-				console.log(xhr.responseText)
-			} else {
-				console.error(xhr.statusText)
-			}
-		}
+	try {
+		axios.post(`${backend}/results`, payload)	
+	} catch (error) {
+		console.log(error)
 	}
-	xhr.onerror = () => console.error(xhr.statusText)
-	xhr.setRequestHeader('Content-Type', 'application/json')
-	xhr.send(JSON.stringify(payload))
 }
 
 const getResults = async (options) => {

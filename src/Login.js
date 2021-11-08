@@ -1,11 +1,12 @@
 import React from "react"
+import axios from "axios"
 const backend = 'http://localhost:4000'
 
 class Login extends React.Component {
 	componentDidMount() {
 		window.gapi.load('signin2', () => window.gapi.signin2.render('loginButton'))
 	}
-	componentWillUnmount() {
+	async componentWillUnmount() {
 		const authInstance = window.gapi.auth2.getAuthInstance()
 		const isSignedIn = authInstance.isSignedIn.get()
 		if (isSignedIn) {
@@ -14,22 +15,14 @@ class Login extends React.Component {
 			this.onSignIn(user)
 		}
 	}
-	onSignIn(user) {
+	async onSignIn(user) {
 		const id_token = user.getAuthResponse().id_token
-		let xhr = new XMLHttpRequest()
-		xhr.open('POST', `${backend}/tokensignin`)
-		xhr.onload = () => {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					console.log(xhr.responseText)
-				} else {
-					console.error(xhr.statusText)
-				}
-			}
+		try {
+			const r = await axios.post(`${backend}/tokensignin`, 'id_token=' + id_token)
+			console.log(r)
+		} catch (error) {
+			console.error(error)
 		}
-		xhr.onerror = () => console.error(xhr.statusText)
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-		xhr.send('id_token=' + id_token)
 	}
 
 	render() {
