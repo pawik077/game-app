@@ -64,74 +64,100 @@ const Circles = ({ tap, activeId }) =>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
 
-const CircleGame = () => {
-	const authInstance = window.gapi.auth2.getAuthInstance()
-	const user = authInstance.currentUser.get()
-	const userProfile = user.getBasicProfile()
-	const profile = {
-		id: userProfile.getId(),
-		name: userProfile.getName(),
-		image: userProfile.getImageUrl(),
-		email: userProfile.getEmail(),
-		token: user.getAuthResponse().id_token
+class CircleGame extends React.Component {
+	authInstance = window.gapi.auth2.getAuthInstance()
+	user = this.authInstance.currentUser.get()
+	userProfile = this.user.getBasicProfile()
+	profile = {
+		id: this.userProfile.getId(),
+		name: this.userProfile.getName(),
+		image: this.userProfile.getImageUrl(),
+		email: this.userProfile.getEmail(),
+		token: this.user.getAuthResponse().id_token
 	}
-	const [playing, setPlaying] = React.useState(false)
-	const [finished, setFinished] = React.useState(false)
-	const [score, setScore] = React.useState(0)
-	const [activeCircleId, setActiveCircleId] = React.useState(0)
-	const [gameTime, setGameTime] = React.useState('')
-	const startGame = () => {
-		setFinished(false)
-		setPlaying(true)
-		setScore(0)
-		setActiveCircleId(Math.floor(Math.random() * CIRCLE_NUMBER))
+	// const [playing, setPlaying] = React.useState(false)
+	// const [finished, setFinished] = React.useState(false)
+	// const [score, setScore] = React.useState(0)
+	// const [activeCircleId, setActiveCircleId] = React.useState(0)
+	// const [gameTime, setGameTime] = React.useState('')
+	constructor(props) {
+		super(props)
+		this.state = {
+			playing: false,
+			finished: false,
+			score: 0,
+			activeCircleId: 0,
+			gameTime: ''
+		}
 	}
-	const endGame = () => {
-		setPlaying(false)
-		setFinished(true)
-		sendResults(profile.email, 1, { Setting1: gameTime }, { Result1: score, Result2: (parseFloat(gameTime) * 1000 / score).toFixed(2) })
+	startGame = () => {
+		// setFinished(false)
+		// setPlaying(true)
+		// setScore(0)
+		// setActiveCircleId(Math.floor(Math.random() * CIRCLE_NUMBER))
+		this.setState({
+			playing: true,
+			finished: false,
+			score: 0,
+			activeCircleId: Math.floor(Math.random() * CIRCLE_NUMBER)
+		})
 	}
-	const backToStart = () => {
-		setPlaying(false)
-		setFinished(false)
+	endGame = () => {
+		// setPlaying(false)
+		// setFinished(true)
+		this.setState({
+			playing: false,
+			finished: true
+		})
+		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
-	const tap = (points) => {
-		setScore(score + points)
+	backToStart = () => {
+		// setPlaying(false)
+		// setFinished(false)
+		this.setState({
+			playing: false,
+			finished:false
+		})
+	}
+	tap = (points) => {
+		// setScore(score + points)
+		this.setState((state) => ({ score: state.score + points }))
 		let rn
 		do rn = Math.floor(Math.random() * CIRCLE_NUMBER)
-		while (rn === activeCircleId)
-		setActiveCircleId(rn)
+		while (rn === this.state.activeCircleId)
+		// setActiveCircleId(rn)
+		this.setState({ activeCircleId: rn })
 	}
-	return (
-		<>
+	render() {
+		return <>
 			<Link to='/'>Powrót</Link>
 			<div className='game'>
-				{!playing && !finished && (
+				{!this.state.playing && !this.state.finished && (
 					<div className='welcome'>
 						<h1>Polowanie na przedmioty</h1>
-						<h3>Zalogowany jako: {profile.name} ({profile.email})</h3>
+						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: </h3>
-						Czas gry: <input value={gameTime} onChange={e => setGameTime(e.target.value)} />
-						<button id='startButton' onClick={ Number.isInteger(parseFloat(gameTime)) ? startGame : null }>Start</button>
+						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} />
+						<button id='startButton' onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.startGame : null}>Start</button>
 					</div>
 				)}
-				{playing && (
+				{this.state.playing && (
 					<>
-						<button onClick={backToStart}>End</button>
-						<Timer time={parseFloat(gameTime) * 1000} onEnd={endGame} />
-						<Score value={score}/>
-						<Circles tap={tap} activeId={activeCircleId}/>
+						<button onClick={this.backToStart}>End</button>
+						<Timer time={parseFloat(this.state.gameTime) * 1000} onEnd={this.endGame} />
+						<Score value={this.state.score} />
+						<Circles tap={this.tap} activeId={this.state.activeCircleId} />
 					</>
 				)}
-				{finished && (
+				{this.state.finished && (
 					<div className='endGame'>
-						<Score value={score} />
-						<p>Średni czas uderzenia: {(parseFloat(gameTime) * 1000 / score).toFixed(2)}ms</p>
-						<button onClick={startGame}>Zagraj ponownie</button>
+						<Score value={this.state.score} />
+						<p>Średni czas uderzenia: {(parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2)}ms</p>
+						<button onClick={this.startGame}>Zagraj ponownie</button>
 					</div>
 				)}
 			</div>
 		</>
-	)
+	}
 }
 export default CircleGame
