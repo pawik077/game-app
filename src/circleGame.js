@@ -2,6 +2,7 @@ import React from "react";
 import ProgressBar from "@ramonak/react-progress-bar"
 import { Link } from "react-router-dom";
 import './circleGame.css'
+import axios from "axios";
 const backend = 'http://localhost:4000'
 
 const CIRCLE_SCORE = 1
@@ -28,6 +29,19 @@ const sendResults = (eMail, gameID, gameSettings, gameResults) => {
 	xhr.onerror = () => console.error(xhr.statusText)
 	xhr.setRequestHeader('Content-Type', 'application/json')
 	xhr.send(JSON.stringify(payload))
+}
+
+const getResults = async (options) => {
+	if (!options) options = {
+		eMail: '',
+		gameID: ''
+	}
+	try {
+		const results = await axios.get(`${backend}/results?eMail=${options.eMail || ''}&gameID=${options.gameID || ''}`)
+		return results.data
+	} catch (error) {
+		throw error
+	}
 }
 
 const Timer = ({ time, interval = 100, onEnd }) => {
@@ -87,7 +101,17 @@ class CircleGame extends React.Component {
 			finished: false,
 			score: 0,
 			activeCircleId: 0,
-			gameTime: ''
+			gameTime: '',
+			highScore: ''
+		}
+	}
+	async componentDidMount() {
+		try {
+			const results = await getResults()
+			const highScore = results.sort((a, b) => (a.Result2 >= b.Result2) ? 1 : -1)[0].Result2
+			this.setState({ highScore: highScore + 'ms'})
+		} catch (error) {
+			this.setState({ highScore: error.toString() })
 		}
 	}
 	startGame = () => {
@@ -136,7 +160,7 @@ class CircleGame extends React.Component {
 					<div className='welcome'>
 						<h1>Polowanie na przedmioty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
-						<h3>Najlepszy wynik: </h3>
+						<h3>Najlepszy wynik: { this.state.highScore }</h3>
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} />
 						<button id='startButton' onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.startGame : null}>Start</button>
 					</div>
