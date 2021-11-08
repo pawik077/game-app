@@ -89,11 +89,6 @@ class CircleGame extends React.Component {
 		email: this.userProfile.getEmail(),
 		token: this.user.getAuthResponse().id_token
 	}
-	// const [playing, setPlaying] = React.useState(false)
-	// const [finished, setFinished] = React.useState(false)
-	// const [score, setScore] = React.useState(0)
-	// const [activeCircleId, setActiveCircleId] = React.useState(0)
-	// const [gameTime, setGameTime] = React.useState('')
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -115,10 +110,6 @@ class CircleGame extends React.Component {
 		}
 	}
 	startGame = () => {
-		// setFinished(false)
-		// setPlaying(true)
-		// setScore(0)
-		// setActiveCircleId(Math.floor(Math.random() * CIRCLE_NUMBER))
 		this.setState({
 			playing: true,
 			finished: false,
@@ -127,8 +118,6 @@ class CircleGame extends React.Component {
 		})
 	}
 	endGame = () => {
-		// setPlaying(false)
-		// setFinished(true)
 		this.setState({
 			playing: false,
 			finished: true
@@ -136,20 +125,16 @@ class CircleGame extends React.Component {
 		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
 	backToStart = () => {
-		// setPlaying(false)
-		// setFinished(false)
 		this.setState({
 			playing: false,
 			finished:false
 		})
 	}
 	tap = (points) => {
-		// setScore(score + points)
 		this.setState((state) => ({ score: state.score + points }))
 		let rn
 		do rn = Math.floor(Math.random() * CIRCLE_NUMBER)
 		while (rn === this.state.activeCircleId)
-		// setActiveCircleId(rn)
 		this.setState({ activeCircleId: rn })
 	}
 	render() {
