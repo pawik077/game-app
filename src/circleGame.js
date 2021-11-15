@@ -1,7 +1,7 @@
 import React from "react";
 import ProgressBar from "@ramonak/react-progress-bar"
 import { Link } from "react-router-dom";
-import './circleGame.css'
+import styles from './circleGame.module.css'
 import axios from "axios";
 const backend = 'http://localhost:4000'
 
@@ -48,8 +48,8 @@ const Timer = ({ time, interval = 100, onEnd }) => {
 	}, [interval])
 	//return <span>{`Time: ${internalTime}`}</span>
 	return (
-		<div id='progressBar'>
-			<span id='timer'>{`Pozostały czas: ${(internalTime / 1000).toFixed(1)}s`}</span>
+		<div id={styles.progressBar}>
+			<span id={styles.timer}>{`Pozostały czas: ${(internalTime / 1000).toFixed(1)}s`}</span>
 			<ProgressBar completed={internalTime / time * 100} isLabelVisible={false} transitionDuration='0.1s' transitionTimingFunction='linear' />
 		</div>
 	)
@@ -57,12 +57,12 @@ const Timer = ({ time, interval = 100, onEnd }) => {
 
 const Circle = ({ tap, isActive }) =>
 	<button
-		className={`circle ${isActive ? 'activeCircle' : 'inactiveCircle'}`}
+		className={`${styles.circle} ${isActive ? styles.activeCircle : styles.inactiveCircle}`/*`styles.circle styles.${isActive ? 'activeCircle' : 'inactiveCircle'}`*/}
 		onClick={() => { if (isActive) tap(CIRCLE_SCORE) }}
 	/>
 
 const Circles = ({ tap, activeId }) =>
-	<div id='circles'>
+	<div id={styles.circles}>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
 			<Circle key={id} tap={tap} isActive={id === activeId} />)}
 	</div>
@@ -142,18 +142,18 @@ class CircleGame extends React.Component {
 	render() {
 		return <>
 			<Link to='/'>Powrót</Link>
-			<div className='game'>
+			<div className={styles.game}>
 				{!this.state.playing && !this.state.finished && !this.state.countdown && (
-					<div className='welcome'>
+					<div className={styles.welcome}>
 						<h1>Polowanie na przedmioty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} />
-						<button id='startButton' onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
+						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
 					</div>
 				)}
 				{this.state.countdown && (
-					<div className='countdown'>
+					<div className={styles.countdown}>
 						<h2>Przygotuj się</h2>
 						<Timer time={3000} onEnd={this.startGame}/>
 					</div>
@@ -162,12 +162,12 @@ class CircleGame extends React.Component {
 					<>
 						<Timer time={parseFloat(this.state.gameTime) * 1000} onEnd={this.endGame} />
 						<Score value={this.state.score} />
-						<button id='endButton' onClick={this.backToStart}>End</button>
+						<button id={styles.endButton} onClick={this.backToStart}>End</button>
 						<Circles tap={this.tap} activeId={this.state.activeCircleId} />
 					</>
 				)}
 				{this.state.finished && (
-					<div className='endGame'>
+					<div className={styles.endGame}>
 						<Score value={this.state.score} />
 						<p>Średni czas uderzenia: {(parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2)}ms</p>
 						<button onClick={this.startGame}>Zagraj ponownie</button>
