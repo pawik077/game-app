@@ -88,7 +88,7 @@ class CircleGame extends React.Component {
 			countdown: false,
 			score: 0,
 			activeCircleId: 0,
-			gameTime: '',
+			gameTime: '30',
 			color: 'green',
 			highScore: ''
 		}
