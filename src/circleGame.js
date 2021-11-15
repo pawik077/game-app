@@ -178,7 +178,8 @@ class CircleGame extends React.Component {
 					<div className={styles.endGame}>
 						<Score value={this.state.score} />
 						<p>Średni czas uderzenia: {(parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2)}ms</p>
-						<button onClick={this.startGame}>Zagraj ponownie</button>
+						<button onClick={this.startGame}>Zagraj ponownie</button><br/>
+						<button onClick={this.backToStart}>Wróć na start</button>
 					</div>
 				)}
 			</div>
