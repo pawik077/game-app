@@ -55,16 +55,16 @@ const Timer = ({ time, interval = 100, onEnd }) => {
 	)
 }
 
-const Circle = ({ tap, isActive }) =>
+const Circle = ({ tap, isActive, color }) =>
 	<button
-		className={`${styles.circle} ${isActive ? styles.activeCircle : styles.inactiveCircle}`/*`styles.circle styles.${isActive ? 'activeCircle' : 'inactiveCircle'}`*/}
+		className={styles.circle} style={{ backgroundColor: color}}
 		onClick={() => { if (isActive) tap(CIRCLE_SCORE) }}
 	/>
 
-const Circles = ({ tap, activeId }) =>
+const Circles = ({ tap, activeId, activeColor }) =>
 	<div id={styles.circles}>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
-			<Circle key={id} tap={tap} isActive={id === activeId} />)}
+			<Circle key={id} tap={tap} isActive={id === activeId} color={id === activeId ? activeColor : 'black'} />)}
 	</div>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
@@ -89,6 +89,7 @@ class CircleGame extends React.Component {
 			score: 0,
 			activeCircleId: 0,
 			gameTime: '',
+			color: 'green',
 			highScore: ''
 		}
 	}
@@ -148,7 +149,14 @@ class CircleGame extends React.Component {
 						<h1>Polowanie na przedmioty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
-						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} />
+						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} /><br/>
+						Kolor aktywnego obiektu: <select value={this.state.color} onChange={e => this.setState({ color: e.target.value })} >
+							<option value='green'>Zielony</option>
+							<option value='red'>Czerwony</option>
+							<option value='blue'>Niebieski</option>
+							<option value='yellow'>Żółty</option>
+							<option value='magenta'>Magenta</option>
+						</select>
 						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
 					</div>
 				)}
@@ -163,7 +171,7 @@ class CircleGame extends React.Component {
 						<Timer time={parseFloat(this.state.gameTime) * 1000} onEnd={this.endGame} />
 						<Score value={this.state.score} />
 						<button id={styles.endButton} onClick={this.backToStart}>End</button>
-						<Circles tap={this.tap} activeId={this.state.activeCircleId} />
+						<Circles tap={this.tap} activeId={this.state.activeCircleId} activeColor={this.state.color}/>
 					</>
 				)}
 				{this.state.finished && (

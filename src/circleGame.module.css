@@ -58,13 +58,3 @@
 	width: 98%;
 	height: 98%;
 }
-
-.activeCircle {
-	background-color: green;
-	border-color: green;
-}
-
-.inactiveCircle {
-	background-color: black;
-	/* border-color: white; */
-}
