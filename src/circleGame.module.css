@@ -51,11 +51,6 @@
 	width: 100%;
 }
 
-body {
-	background-color: black;
-	color: white;
-}
-
 .circle {
 	border: 1px solid;
 	border-radius: 50%;
