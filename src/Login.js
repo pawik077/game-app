@@ -1,5 +1,6 @@
 import React from "react"
 import axios from "axios"
+import styles from "./Login.module.css"
 const backend = 'http://localhost:4000'
 
 class Login extends React.Component {
@@ -27,7 +28,7 @@ class Login extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className={styles.welcome}>
 				<h1>Witamy</h1>
 				<div id='loginButton'>Zaloguj się z Google</div>
 			</div>
