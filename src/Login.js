@@ -1,7 +1,7 @@
 import React from "react"
 import axios from "axios"
 import styles from "./Login.module.css"
-const backend = 'http://localhost:4000'
+const backend = process.env.REACT_APP_BACKEND
 
 class Login extends React.Component {
 	componentDidMount() {

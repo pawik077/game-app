@@ -3,7 +3,7 @@ import ProgressBar from "@ramonak/react-progress-bar"
 import { Link } from "react-router-dom";
 import styles from './circleGame.module.css'
 import axios from "axios";
-const backend = 'http://localhost:4000'
+const backend = process.env.REACT_APP_BACKEND
 
 const CIRCLE_SCORE = 1
 const CIRCLE_NUMBER = 20

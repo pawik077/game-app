@@ -5,7 +5,7 @@ import Login from "./Login"
 import Home from "./Home"
 import CircleGame from "./circleGame"
 
-const CLIENT_ID = '479916084496-dp7jkcmdb7k4evs23grf0sotrb0nfo5p.apps.googleusercontent.com'
+const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
 
 class App extends React.Component {
 	constructor(props) {
