@@ -117,7 +117,28 @@ class CircleGame extends React.Component {
 			countdown: false,
 			finished: true
 		})
-		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
+		let colorFloat
+		switch (this.state.color) {
+			case 'green':
+				colorFloat = 0
+				break
+			case 'red':
+				colorFloat = 1
+				break
+			case 'blue':
+				colorFloat = 2
+				break
+			case 'yellow':
+				colorFloat = 3
+				break
+			case 'magenta':
+				colorFloat = 4
+				break
+			default:
+				colorFloat = -1
+				break
+		}
+		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime, Setting2: colorFloat }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
 	backToStart = () => {
 		this.setState({
