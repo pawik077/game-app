@@ -1,0 +1,58 @@
+.game {
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	position: absolute;
+	height: auto;
+	width: auto;
+	margin: 0 auto;
+}
+
+.welcome, .endGame {
+	text-align: center;
+	display: block;
+	margin: auto;
+	width: 100%;
+}
+
+.countdown {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 50vw
+}
+
+#circles {
+	display: grid;
+	grid-template-columns: repeat(5, 19.5vmin);
+	grid-template-rows: repeat(4, 19.5vmin);
+}
+
+#startButton {
+	display: block;
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto; 
+}
+
+#endButton {
+	float: right
+}
+
+#timer {
+	position: absolute;
+	margin-left: 10px;
+}
+
+#progressBar {
+	float: right;
+	width: 100%;
+}
+
+.circle {
+	border: 1px solid;
+	border-radius: 50%;
+	margin: auto;
+}

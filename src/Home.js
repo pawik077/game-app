@@ -21,6 +21,7 @@ const Home = () => {
 				<nav>
 					<ul>
 						<li><Link to='/circleGame'>Polowanie na przedmioty</Link></li>
+						<li><Link to='/growingCircleGame'>Polowanie na rosnące przedmioty</Link></li>
 					</ul>
 				</nav>
 			</div>
