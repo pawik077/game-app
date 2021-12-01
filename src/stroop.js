@@ -1,10 +1,8 @@
-import React from "react";
+import React from "react"
 import { Link } from "react-router-dom"
+import Timer from "./Timer"
+import { sendResults, getResults } from "./comms"
 import styles from './stroop.module.css'
-import ProgressBar from "@ramonak/react-progress-bar";
-import axios from "axios";
-const backend = process.env.REACT_APP_BACKEND
-
 
 const BUTTON_NUMBER = 5
 const ANSWER_SCORE = 1
@@ -18,53 +16,6 @@ const COLOR_STRINGS = {
 	'black': 'Czarny',
 	'purple': 'Fioletowy',
 	'saddlebrown': 'Brązowy',
-}
-
-const sendResults = (eMail, gameID, gameSettings, gameResults) => {
-	const payload = {
-		eMail: eMail,
-		gameID: gameID,
-		gameSettings: gameSettings,
-		gameResults: gameResults
-	}
-	try {
-		axios.post(`${backend}/results`, payload)	
-	} catch (error) {
-		console.log(error)
-	}
-}
-
-const getResults = async (options) => {
-	if (!options) options = {
-		eMail: '',
-		gameID: ''
-	}
-	try {
-		const results = await axios.get(`${backend}/results?eMail=${options.eMail || ''}&gameID=${options.gameID || ''}`)
-		return results.data
-	} catch (error) {
-		throw error
-	}
-}
-
-const Timer = ({ time, interval = 100, onEnd }) => {
-	const [internalTime, setInternalTime] = React.useState(time)
-	const timerRef = React.useRef(time)
-	const timeRef = React.useRef(time)
-	React.useEffect(() => {
-		if (internalTime === 0 && onEnd) onEnd()
-	}, [internalTime, onEnd])
-	React.useEffect(() => {
-		timerRef.current = setInterval(() => setInternalTime(timeRef.current -= interval), interval)
-		return () => clearInterval(timerRef.current)
-	}, [interval])
-	//return <span>{`Time: ${internalTime}`}</span>
-	return (
-		<div id={styles.progressBar}>
-			<span id={styles.timer}>{`Pozostały czas: ${(internalTime / 1000).toFixed(1)}s`}</span>
-			<ProgressBar completed={internalTime / time * 100} isLabelVisible={false} transitionDuration='0.1s' transitionTimingFunction='linear' />
-		</div>
-	)
 }
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */

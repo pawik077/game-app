@@ -41,16 +41,6 @@
 	float: right
 }
 
-#timer {
-	position: absolute;
-	margin-left: 10px;
-}
-
-#progressBar {
-	float: right;
-	width: 100%;
-}
-
 .circle {
 	border: 1px solid;
 	border-radius: 50%;

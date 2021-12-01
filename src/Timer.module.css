@@ -1,0 +1,9 @@
+#timer {
+	position: absolute;
+	margin-left: 10px;
+}
+
+#progressBar {
+	float: right;
+	width: 100%;
+}
