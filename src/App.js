@@ -5,6 +5,7 @@ import Login from "./Login"
 import Home from "./Home"
 import CircleGame from "./circleGame"
 import GrowingCircleGame from "./growingCircleGame"
+import Stroop from "./stroop.js"
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
 
@@ -39,13 +40,14 @@ class App extends React.Component {
 	}
 	render() {
 		return (
-		<BrowserRouter>
-			<Switch>
-				<Route exact path='/' render={() => this.ifUserSignedIn(Home)} />
+			<BrowserRouter>
+				<Switch>
+					<Route exact path='/' render={() => this.ifUserSignedIn(Home)} />
 					<Route path='/circleGame' render={() => this.ifUserSignedIn(CircleGame)} />
 					<Route path='/growingCircleGame' render={() => this.ifUserSignedIn(GrowingCircleGame)} />
-			</Switch>
-		</BrowserRouter>
+					<Route path='/stroop' render={() => this.ifUserSignedIn(Stroop)} />
+				</Switch>
+			</BrowserRouter>
 		)
 	}
 }
