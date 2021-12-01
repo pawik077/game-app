@@ -44,7 +44,7 @@
 .circle {
 	border: 1px solid;
 	border-radius: 50%;
-	margin: 2%;
-	width: 98%;
-	height: 98%;
+	margin: auto;
+	width: 100%;
+	height: 100%;
 }
