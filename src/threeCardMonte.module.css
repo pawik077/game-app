@@ -1,0 +1,49 @@
+.game {
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	position: absolute;
+	height: auto;
+	width: auto;
+	margin: 0 auto;
+}
+
+.welcome, .endGame {
+	text-align: center;
+	display: block;
+	margin: auto;
+	width: 100%;
+}
+
+.countdown {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 50vw
+}
+
+#startButton {
+	display: block;
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto; 
+}
+
+#endButton {
+	float: right
+}
+
+#cards {
+	display: grid;
+	grid-template-rows: 30vh;
+}
+
+.card {
+	border: 0px solid;
+	width: 99%;
+	height: 100%;
+	margin: auto;
+	font-size: 5vh;
+}
