@@ -36,13 +36,14 @@
 }
 
 #cards {
+	position: relative;
 	display: grid;
 	grid-template-rows: 30vh;
 }
 
 .card {
-	border: 0px solid;
-	width: 99%;
+	border: 15px solid black;
+	width: 100%;
 	height: 100%;
 	margin: auto;
 	font-size: 5vh;

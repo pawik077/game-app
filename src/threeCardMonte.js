@@ -1,27 +1,50 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import FlipMove from "react-flip-move"
 import Timer from "./Timer"
+import { shuffle } from "lodash"
 import { sendResults, getResults } from "./comms"
 import styles from './threeCardMonte.module.css'
 
 const ANSWER_SCORE = 1
 
-const Card = ({  isCorrect, roundOn, correctAnswerAction, wrongAnswerAction }) =>
+// /* Randomize array in-place using Durstenfeld shuffle algorithm */
+// const shuffle = (array) => {
+//     for (let i = array.length - 1; i > 0; --i) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [array[i], array[j]] = [array[j], array[i]]
+//     }
+// }
+
+const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wrongAnswerAction }, ref) => (
 	<button
 		className={styles.card}
-		onClick={roundOn ? () => {
-			if (isCorrect) correctAnswerAction(ANSWER_SCORE)
+		ref={ref}
+		onClick={phaseNumber === 1 ? () => {
+			if (cardValue) correctAnswerAction(ANSWER_SCORE)
 			else wrongAnswerAction(ANSWER_SCORE)
 		} : null}>
-			{roundOn ? '?' : isCorrect ? '✔' : '❌'}
+			{phaseNumber === 1 ? '?' : cardValue ? '✔' : '❌'}
 	</button>
+))
 
-const Cards = ({ correctId, cardsNumber, roundOn, correctAnswerAction, wrongAnswerAction}) =>
-	<div id={styles.cards} style={{ gridTemplateColumns: `repeat(${cardsNumber}, 10vw)`}}>
-		{new Array(cardsNumber).fill().map((_, id) =>
-			<Card key={id} isCorrect={id === correctId} roundOn={roundOn} correctAnswerAction={correctAnswerAction} wrongAnswerAction={wrongAnswerAction} />)}
-	</div>
-
+const Cards = ({ cards, phaseNumber, correctAnswerAction, wrongAnswerAction }) => {
+	const renderCards = () =>  cards.map((card) => <Card key={card.id} cardValue={card.status} phaseNumber={phaseNumber} correctAnswerAction={correctAnswerAction} wrongAnswerAction={wrongAnswerAction} />)
+	return (
+		<div id={styles.cards} style={{ gridTemplateColumns: `repeat(${cards.length}, 10vw)` }}>
+			<FlipMove
+				duration={1000}
+				delay={0}
+				easing={"cubic-bezier(1, 0, 0, 1)"}
+				staggerDurationBy={20}
+				staggerDelayBy={20}
+				typeName={null}
+			>
+				{renderCards()}
+			</FlipMove>
+		</div>
+	)
+}
 class ThreeCardMonte extends React.Component {
 	authInstance = window.gapi.auth2.getAuthInstance()
 	user = this.authInstance.currentUser.get()
@@ -40,12 +63,14 @@ class ThreeCardMonte extends React.Component {
 			finished: false,
 			countdown: false,
 			roundOn: true,
+			phaseNumber: 0,
 			score: 0,
 			wrongAnswers: 0,
-			correctCardId: 0,
 			cardsNumber: 3,
 			numberOfRounds: 10,
 			currentRound: 0,
+			shuffleNumber: 3,
+			cards: [],
 			// highScore: ''
 		}
 	}
@@ -93,19 +118,36 @@ class ThreeCardMonte extends React.Component {
 	}
 	nextRound = () => {
 		if (this.state.currentRound < this.state.numberOfRounds) {
+			const ids = 'abcdefghijklmopqrstuvwxyz'
 			let correctCardId = Math.floor(Math.random() * this.state.cardsNumber)
+			let cards = []
+			for (let i = 0; i < this.state.cardsNumber; ++i) {
+				let card = {
+					id: ids[i],
+					status: false,
+				}
+				cards.push(card)
+			}
+			cards[correctCardId].status = true
 			this.setState((state) => ({
-				correctCardId: correctCardId,
-				roundOn: true,
-				currentRound: state.currentRound + 1
+				cards: cards,
+				currentRound: state.currentRound + 1,
+				phaseNumber: 0
 			}))
 		} else this.endGame()
 	}
 	correctAnswer = (points) => {
-		this.setState((state) => ({ score: state.score + points, roundOn: false }))
+		this.setState((state) => ({ score: state.score + points, phaseNumber: 2 }))
 	}
 	wrongAnswer = (points) => {
-		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points, roundOn: false }))
+		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points, phaseNumber: 2 }))
+	}
+	shuffleCards = () => {
+		this.setState((state) => ({ cards: shuffle(state.cards) }))
+	}
+	handleShuffling = () => {
+		this.setState({phaseNumber: 1})
+		this.shuffleCards()
 	}
 	render() {
 		return <>
@@ -119,13 +161,14 @@ class ThreeCardMonte extends React.Component {
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br /> */}
 						Liczba kart: <input value={this.state.cardsNumber} onChange={e => this.setState({ cardsNumber: e.target.value })} /><br />
 						Liczba rund: <input value={this.state.numberOfRounds} onChange={e => this.setState({ numberOfRounds: e.target.value })} /><br />
+						Liczba tasowań: <input value={this.state.shuffleNumber} onChange={e => this.setState({ shuffleNumber: e.target.value })}/><br />
 						<button id={styles.startButton} onClick={/*Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null*/ this.getReady}>Start</button>
 					</div>
 				)}
 				{this.state.countdown && (
 					<div className={styles.countdown}>
 						<h2>Przygotuj się</h2>
-						<Timer time={3000} onEnd={this.startGame}/>
+						<Timer time={200} onEnd={this.startGame}/>
 					</div>
 				)}
 				{this.state.playing && (
@@ -134,10 +177,14 @@ class ThreeCardMonte extends React.Component {
 						<div>{`Błędne odpowiedzi: ${this.state.wrongAnswers}`}</div>
 						<div>{`Runda ${this.state.currentRound}/${this.state.numberOfRounds}`}</div>
 						<button id={styles.endButton} onClick={this.backToStart}>End</button><br/>
-						<Cards cardsNumber={parseInt(this.state.cardsNumber)} roundOn={this.state.roundOn} correctId={this.state.correctCardId} correctAnswerAction={this.correctAnswer} wrongAnswerAction={this.wrongAnswer} />
+						<Cards cards={this.state.cards} phaseNumber={this.state.phaseNumber} correctAnswerAction={this.correctAnswer} wrongAnswerAction={this.wrongAnswer} />
+						<p>Faza {this.state.phaseNumber}</p>
 					</>
 				)}
-				{this.state.playing && !this.state.roundOn && (
+				{this.state.playing && this.state.phaseNumber === 0 && (
+					<button onClick={this.handleShuffling}>Tasuj karty</button>
+				)}
+				{this.state.playing && this.state.phaseNumber === 2 && (
 					<button onClick={this.nextRound}>{this.state.currentRound === this.state.numberOfRounds ? 'Koniec' : 'Nowa runda'}</button>
 				)}
 				{this.state.finished && (
