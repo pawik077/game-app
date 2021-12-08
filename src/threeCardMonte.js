@@ -8,23 +8,15 @@ import styles from './threeCardMonte.module.css'
 
 const ANSWER_SCORE = 1
 
-// /* Randomize array in-place using Durstenfeld shuffle algorithm */
-// const shuffle = (array) => {
-//     for (let i = array.length - 1; i > 0; --i) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [array[i], array[j]] = [array[j], array[i]]
-//     }
-// }
-
 const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wrongAnswerAction }, ref) => (
 	<button
 		className={styles.card}
 		ref={ref}
-		onClick={phaseNumber === 1 ? () => {
+		onClick={phaseNumber === 2 ? () => {
 			if (cardValue) correctAnswerAction(ANSWER_SCORE)
 			else wrongAnswerAction(ANSWER_SCORE)
 		} : null}>
-			{phaseNumber === 1 ? '?' : cardValue ? '✔' : '❌'}
+			{phaseNumber === 1 || phaseNumber === 2 ? '?' : cardValue ? '✔' : '❌'}
 	</button>
 ))
 
@@ -33,11 +25,11 @@ const Cards = ({ cards, phaseNumber, correctAnswerAction, wrongAnswerAction }) =
 	return (
 		<div id={styles.cards} style={{ gridTemplateColumns: `repeat(${cards.length}, 10vw)` }}>
 			<FlipMove
-				duration={1000}
+				duration={750}
 				delay={0}
 				easing={"cubic-bezier(1, 0, 0, 1)"}
-				staggerDurationBy={20}
-				staggerDelayBy={20}
+				staggerDurationBy={0}
+				staggerDelayBy={0}
 				typeName={null}
 			>
 				{renderCards()}
@@ -62,27 +54,26 @@ class ThreeCardMonte extends React.Component {
 			playing: false,
 			finished: false,
 			countdown: false,
-			roundOn: true,
 			phaseNumber: 0,
 			score: 0,
 			wrongAnswers: 0,
 			cardsNumber: 3,
 			numberOfRounds: 10,
 			currentRound: 0,
-			shuffleNumber: 3,
+			shuffleNumber: 5,
 			cards: [],
-			// highScore: ''
+			highScore: ''
 		}
 	}
-	// async componentDidMount() {
-	// 	try {
-	// 		const results = await getResults({ eMail: this.profile.email, gameID: 4 })
-	// 		const highScore = results.sort((a, b) => (a.Result2 >= b.Result2) ? 1 : -1)[0].Result2
-	// 		this.setState({ highScore: highScore + 'ms'})
-	// 	} catch (error) {
-	// 		this.setState({ highScore: error.toString() })
-	// 	}
-	// }
+	async componentDidMount() {
+		try {
+			const results = await getResults({ eMail: this.profile.email, gameID: 4 })
+			const highScore = results.sort((a, b) => (a.Result3 <= b.Result3) ? 1 : -1)[0].Result3
+			this.setState({ highScore: highScore + '%'})
+		} catch (error) {
+			this.setState({ highScore: error.toString() })
+		}
+	}
 	startGame = () => {
 		this.setState({
 			playing: true,
@@ -100,7 +91,7 @@ class ThreeCardMonte extends React.Component {
 			countdown: false,
 			finished: true
 		})
-		// sendResults(this.profile.email, 4, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: this.state.wrongAnswers, Result3: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
+		sendResults(this.profile.email, 4, { Setting1: this.state.cardsNumber, Setting2: this.state.numberOfRounds, Setting3: this.state.shuffleNumber }, { Result1: this.state.score, Result2: this.state.wrongAnswers, Result3: ((this.state.score / (this.state.score + this.state.wrongAnswers)) * 100).toFixed(2) })
 	}
 	backToStart = () => {
 		this.setState({
@@ -118,12 +109,11 @@ class ThreeCardMonte extends React.Component {
 	}
 	nextRound = () => {
 		if (this.state.currentRound < this.state.numberOfRounds) {
-			const ids = 'abcdefghijklmopqrstuvwxyz'
 			let correctCardId = Math.floor(Math.random() * this.state.cardsNumber)
 			let cards = []
 			for (let i = 0; i < this.state.cardsNumber; ++i) {
 				let card = {
-					id: ids[i],
+					id: i,
 					status: false,
 				}
 				cards.push(card)
@@ -137,17 +127,23 @@ class ThreeCardMonte extends React.Component {
 		} else this.endGame()
 	}
 	correctAnswer = (points) => {
-		this.setState((state) => ({ score: state.score + points, phaseNumber: 2 }))
+		this.setState((state) => ({ score: state.score + points, phaseNumber: 3 }))
 	}
 	wrongAnswer = (points) => {
-		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points, phaseNumber: 2 }))
+		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points, phaseNumber: 3 }))
 	}
 	shuffleCards = () => {
-		this.setState((state) => ({ cards: shuffle(state.cards) }))
+		this.setState((state) => ({ cards: shuffle(this.state.cards) }))
 	}
 	handleShuffling = () => {
-		this.setState({phaseNumber: 1})
-		this.shuffleCards()
+		this.setState({ phaseNumber: 1 });
+		const timer = ms => new Promise(res => setTimeout(res, ms));
+		(async () => {
+			for (let i = 0; i < this.state.shuffleNumber; ++i) {
+				this.shuffleCards()
+				await timer(1000)
+			}
+		})().then(() => {this.setState({ phaseNumber: 2 })})
 	}
 	render() {
 		return <>
@@ -157,8 +153,7 @@ class ThreeCardMonte extends React.Component {
 					<div className={styles.welcome}>
 						<h1>Trzy karty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
-						{/* <h3>Najlepszy wynik: { this.state.highScore }</h3>
-						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br /> */}
+						<h3>Najlepszy wynik: { this.state.highScore }</h3>
 						Liczba kart: <input value={this.state.cardsNumber} onChange={e => this.setState({ cardsNumber: e.target.value })} /><br />
 						Liczba rund: <input value={this.state.numberOfRounds} onChange={e => this.setState({ numberOfRounds: e.target.value })} /><br />
 						Liczba tasowań: <input value={this.state.shuffleNumber} onChange={e => this.setState({ shuffleNumber: e.target.value })}/><br />
@@ -168,7 +163,7 @@ class ThreeCardMonte extends React.Component {
 				{this.state.countdown && (
 					<div className={styles.countdown}>
 						<h2>Przygotuj się</h2>
-						<Timer time={200} onEnd={this.startGame}/>
+						<Timer time={3000} onEnd={this.startGame}/>
 					</div>
 				)}
 				{this.state.playing && (
@@ -178,13 +173,12 @@ class ThreeCardMonte extends React.Component {
 						<div>{`Runda ${this.state.currentRound}/${this.state.numberOfRounds}`}</div>
 						<button id={styles.endButton} onClick={this.backToStart}>End</button><br/>
 						<Cards cards={this.state.cards} phaseNumber={this.state.phaseNumber} correctAnswerAction={this.correctAnswer} wrongAnswerAction={this.wrongAnswer} />
-						<p>Faza {this.state.phaseNumber}</p>
 					</>
 				)}
 				{this.state.playing && this.state.phaseNumber === 0 && (
 					<button onClick={this.handleShuffling}>Tasuj karty</button>
 				)}
-				{this.state.playing && this.state.phaseNumber === 2 && (
+				{this.state.playing && this.state.phaseNumber === 3 && (
 					<button onClick={this.nextRound}>{this.state.currentRound === this.state.numberOfRounds ? 'Koniec' : 'Nowa runda'}</button>
 				)}
 				{this.state.finished && (
