@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import Timer from "./Timer"
 import { sendResults, getResults } from "./comms"
 import styles from './stroop.module.css'
+import { shuffle } from "lodash"
 
 const BUTTON_NUMBER = 5
 const ANSWER_SCORE = 1
@@ -16,14 +17,6 @@ const COLOR_STRINGS = {
 	'black': 'Czarny',
 	'purple': 'Fioletowy',
 	'saddlebrown': 'Brązowy',
-}
-
-/* Randomize array in-place using Durstenfeld shuffle algorithm */
-const shuffle = (array) => {
-    for (let i = array.length - 1; i > 0; --i) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]
-    }
 }
 
 const ColorButton = ({ color, isCorrect, correctAnswerAction, wrongAnswerAction }) =>
