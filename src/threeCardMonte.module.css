@@ -38,13 +38,14 @@
 #cards {
 	position: relative;
 	display: grid;
-	grid-template-rows: 30vh;
+	width: 80vw;
+	grid-template-rows: 50vh;
 }
 
 .card {
-	border: 15px solid black;
+	border: 0.4vw solid black;
 	width: 100%;
 	height: 100%;
 	margin: auto;
-	font-size: 5vh;
+	font-size: 10vw;
 }
