@@ -66,7 +66,7 @@ class Stroop extends React.Component {
 			const highScore = results.sort((a, b) => (a.Result3 >= b.Result3) ? 1 : -1)[0].Result3
 			this.setState({ highScore: highScore + 'ms'})
 		} catch (error) {
-			this.setState({ highScore: error.toString() })
+			this.setState({ highScore: 'N/A' })
 		}
 	}
 	startGame = () => {

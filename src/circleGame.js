@@ -51,7 +51,7 @@ class CircleGame extends React.Component {
 			const highScore = results.sort((a, b) => (a.Result2 >= b.Result2) ? 1 : -1)[0].Result2
 			this.setState({ highScore: highScore + 'ms'})
 		} catch (error) {
-			this.setState({ highScore: error.toString() })
+			this.setState({ highScore: 'N/A' })
 		}
 	}
 	startGame = () => {
