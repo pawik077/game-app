@@ -23,7 +23,7 @@ const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wr
 const Cards = ({ cards, phaseNumber, correctAnswerAction, wrongAnswerAction }) => {
 	const renderCards = () =>  cards.map((card) => <Card key={card.id} cardValue={card.status} phaseNumber={phaseNumber} correctAnswerAction={correctAnswerAction} wrongAnswerAction={wrongAnswerAction} />)
 	return (
-		<div id={styles.cards} style={{ gridTemplateColumns: `repeat(${cards.length}, 10vw)` }}>
+		<div id={styles.cards} style={{ gridTemplateColumns: `repeat(${cards.length}, ${100/cards.length}%` }}>
 			<FlipMove
 				duration={750}
 				delay={0}
