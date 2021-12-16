@@ -2,6 +2,13 @@ import React from "react"
 import { Link } from "react-router-dom"
 import screenfull from "screenfull"
 
+/**
+ * Home page component, consists of links to other components,
+ * Fullscreen toggle button and user info,
+ * along with a logout button
+ * 
+ * @returns JSX.Element representing Home Page
+ */
 const Home = () => {
 	const authInstance = window.gapi.auth2.getAuthInstance()
 	const user = authInstance.currentUser.get()

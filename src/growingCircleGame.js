@@ -7,7 +7,16 @@ import styles from './growingCircleGame.module.css'
 const CIRCLE_SCORE = 1
 const CIRCLE_NUMBER = 20
 
+/**
+ * Circle component, used as a visual representation of the object
+ * to be found during the game
+ */
 class Circle extends React.Component {
+	/**
+	 * Initialises the component's state, retrieves component's props
+	 * 
+	 * @param {{tap: Function, isActive: boolean, color: string, growTime: number}} props tap - function to run if clicked on active circle, isActive - boolean representing active circle status, color - css argument determining the color of the circle, growTime - time in which the circle grows from 0 to 100% (in seconds)
+	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,27 +24,43 @@ class Circle extends React.Component {
 			time: 0
 		}
 	}
+	/**
+	 * Starts timer used for growing circles, sets new circle size every 10ms
+	 */
 	startTimer = () => {
-		this.setState({ size: 0, time: 0 })
+		this.setState({ size: 0, time: 0 }) //initialising timer
 		this.interval = setInterval(() => {
 			if (this.props.isActive) {
-				this.setState(state => ({ time: state.time + 10 }))
-				const newSize = this.state.time / (this.props.growTime * 10)
-				this.setState({ size: newSize <= 100 ? newSize : 100 })
+				this.setState(state => ({ time: state.time + 10 })) //incrementing timer every interval
+				const newSize = this.state.time / (this.props.growTime * 10) //calculates new percentage size of element ((currentTime[ms])/(growTime[s] * 1000)[ms]) * 100%))
+				this.setState({ size: newSize <= 100 ? newSize : 100 }) //stops increasing size over 100%
 			}
 		}, 10);
 	}
+	/**
+	 * Stops current timer, starts a new timer for another circle, runs tap function
+	 */
 	click = () => {
 		clearInterval(this.interval)
 		this.startTimer()
 		this.props.tap(CIRCLE_SCORE)
 	}
+	/**
+	 * Starts initial timer
+	 */
 	componentDidMount() {
 		this.startTimer()
 	}
+	/**
+	 * Clears timer on component unmount (prevents errors and memory leaks)
+	 */
 	componentWillUnmount() {
 		clearInterval(this.interval)
 	}
+	/**
+	 * 
+	 * @returns JSX.Element representing a circular button of variable size
+	 */
 	render() {
 		return <button
 			className={styles.circle} style={{ backgroundColor: this.props.color, width: `${this.state.size}%`, height: `${this.state.size}%` }}
@@ -43,6 +68,13 @@ class Circle extends React.Component {
 		/>
 	}
 }
+/**
+ * Component used as a grid of available objects, which randomly
+ * activate during the game and start growing
+ * 
+ * @param {{tap: Function, activeId: number, activeColor: string, growTime: number}} props tap - onClick function passed to circles, activeId - ID of active circle, activeColor - css argument determining the color of the active circle, growTime - time in which circle grows from 0 to 100% (in seconds), passed down to circles
+ * @returns JSX.Element representing a grid of circles
+ */
 
 const Circles = ({ tap, activeId, activeColor, growTime }) =>
 	<div id={styles.circles}>
@@ -52,6 +84,9 @@ const Circles = ({ tap, activeId, activeColor, growTime }) =>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
 
+/**
+ * Component representing the GrowingItemHunt game
+ */
 class GrowingCircleGame extends React.Component {
 	authInstance = window.gapi.auth2.getAuthInstance()
 	user = this.authInstance.currentUser.get()
@@ -63,6 +98,11 @@ class GrowingCircleGame extends React.Component {
 		email: this.userProfile.getEmail(),
 		token: this.user.getAuthResponse().id_token
 	}
+	/**
+	 * Initialises thee component's state
+	 * 
+	 * @param {Object} props 
+	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -77,6 +117,10 @@ class GrowingCircleGame extends React.Component {
 			highScore: ''
 		}
 	}
+	/**
+	 * Asynchronously retrieves game results for current user and 
+	 * sets this.state.highScore to the best value
+	 */
 	async componentDidMount() {
 		try {
 			const results = await getResults({ eMail: this.profile.email, gameID: 2 })
@@ -86,6 +130,9 @@ class GrowingCircleGame extends React.Component {
 			this.setState({ highScore: 'N/A' })
 		}
 	}
+	/**
+	 * Sets state to playing state and generates first activeCircle
+	 */
 	startGame = () => {
 		this.setState({
 			playing: true,
@@ -95,6 +142,9 @@ class GrowingCircleGame extends React.Component {
 			activeCircleId: Math.floor(Math.random() * CIRCLE_NUMBER)
 		})
 	}
+	/**
+	 * Sets state to finished state, sends game results and settings to backend
+	 */
 	endGame = () => {
 		this.setState({
 			playing: false,
@@ -124,6 +174,9 @@ class GrowingCircleGame extends React.Component {
 		}
 		sendResults(this.profile.email, 2, { Setting1: this.state.gameTime, Setting2: colorFloat, Setting3: this.state.growTime }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
+	/**
+	 * Resets state to starting state
+	 */
 	backToStart = () => {
 		this.setState({
 			playing: false,
@@ -131,6 +184,9 @@ class GrowingCircleGame extends React.Component {
 			finished:false
 		})
 	}
+	/**
+	 * Sets state to countdown state
+	 */
 	getReady = () => {
 		this.setState({
 			playing: false,
@@ -138,6 +194,11 @@ class GrowingCircleGame extends React.Component {
 			finished: false
 		})
 	}
+	/**
+	 * Adds points for a correct click and generates a new activeCircle
+	 * 
+	 * @param {number} points number of points to be awarded
+	 */
 	tap = (points) => {
 		this.setState((state) => ({ score: state.score + points }))
 		let rn
@@ -145,6 +206,11 @@ class GrowingCircleGame extends React.Component {
 		while (rn === this.state.activeCircleId)
 		this.setState({ activeCircleId: rn })
 	}
+	/**
+	 * Renders the game
+	 * 
+	 * @returns JSX.Element representing the game field
+	 */
 	render() {
 		return <>
 			<Link to='/'>Powrót</Link>

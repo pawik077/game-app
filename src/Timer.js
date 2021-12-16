@@ -2,6 +2,12 @@ import React from "react"
 import ProgressBar from "@ramonak/react-progress-bar"
 import styles from './Timer.module.css'
 
+/**
+ * Timer component, reused in several games
+ * 
+ * @param {{time: number, interval: number, onEnd: Function}} props time - number of milliseconds to run, interval - timer tick, onEnd - function to run when timer ends
+ * @returns JSX.Element representing a timer with a progress bar
+ */
 const Timer = ({ time, interval = 100, onEnd }) => {
 	const [internalTime, setInternalTime] = React.useState(time)
 	const timerRef = React.useRef(time)

@@ -9,7 +9,10 @@ import Stroop from "./stroop.js"
 import ThreeCardMonte from "./threeCardMonte"
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
-
+/**
+ * Main App component, responsible for initialising Google Sign-In and rendering
+ * other components using BrowserRouter
+ */
 class App extends React.Component {
 	constructor(props) {
 		super(props)
@@ -17,6 +20,10 @@ class App extends React.Component {
 			isSignedIn: null
 		}
 	}
+	/**
+	 * Initialises Google Sign-In API and sets up a listener for changes
+	 * in the current user's sign-in state
+	 */
 	initGoogleSignIn() {
 		window.gapi.load('auth2', () => {
 			window.gapi.auth2.init({
@@ -29,12 +36,23 @@ class App extends React.Component {
 			})
 		})
 	}
+	/**
+	 * Appends Google platform scripts to document body
+	 */
 	componentDidMount() {
 		const script = document.createElement('script')
 		script.src = 'https://apis.google.com/js/platform.js'
 		script.onload = () => this.initGoogleSignIn()
 		document.body.appendChild(script)
 	}
+	/**
+	 * Checks if user is signed in,
+	 * if true, renders the desired component,
+	 * if false, renders Login component
+	 * 
+	 * @param {React.Component} Component 
+	 * @returns Component to be rendered
+	 */
 	ifUserSignedIn(Component) {
 		if (this.state.isSignedIn === null) return null
 		return this.state.isSignedIn ? <Component/> : <Login/>

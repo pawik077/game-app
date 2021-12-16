@@ -7,7 +7,13 @@ import { shuffle } from "lodash"
 
 const BUTTON_NUMBER = 5
 const ANSWER_SCORE = 1
+/**
+ * Array of available colors
+ */
 const COLORS = ['green', 'blue', 'red', 'orange', 'yellow', 'black', 'purple', 'saddlebrown']
+/**
+ * List of names of available colors
+ */
 const COLOR_STRINGS = {
 	'green': 'Zielony',
 	'blue': 'Niebieski',
@@ -19,6 +25,12 @@ const COLOR_STRINGS = {
 	'saddlebrown': 'Brązowy',
 }
 
+/**
+ * Color button component, used for choosing color answer
+ * 
+ * @param {{color: string, isCorrect: boolean, correctAnswerAction: Function, wrongAnswerAction: Function}} props color - css argument determining the color of the button, isCorrect - boolean representing button status, correctAnswerAction - function to run if isCorrect, wrongAnswerAction - function to run if !isCorrect 
+ * @returns JSX.Element representing a color button
+ */
 const ColorButton = ({ color, isCorrect, correctAnswerAction, wrongAnswerAction }) =>
 	<button
 		className={styles.colorButton} style={{ backgroundColor: color }}
@@ -28,12 +40,22 @@ const ColorButton = ({ color, isCorrect, correctAnswerAction, wrongAnswerAction 
 		}}
 	/>
 
+/**
+ * Component used as a grid of buttons representing a choice of colors
+ * during the game
+ * 
+ * @param {{colors: string[], currentColor: string, correctAnswerAction: Function, wrongAnswerAction: Function}} props colors - string array representing colors of buttons, currentColor - color representing correct color, correctAnswerAction - function to run if currentColor === color passed to buttons, wrongAnswerAction - function to run if currentColor !== color passed to buttons
+ * @returns JSX.Element representing a grid of buttons
+ */
 const ColorButtons = ({ colors, currentColor, correctAnswerAction, wrongAnswerAction }) =>
 	<div id={styles.colorButtonsGrid}>
 		{new Array(BUTTON_NUMBER).fill().map((_, id) =>
 			<ColorButton key={id} color={colors[id]} isCorrect={colors[id] === currentColor} correctAnswerAction={correctAnswerAction} wrongAnswerAction={wrongAnswerAction} />)}
 	</div>
 
+/**
+ * Component representing the StroopEffectTest game
+ */
 class Stroop extends React.Component {
 	authInstance = window.gapi.auth2.getAuthInstance()
 	user = this.authInstance.currentUser.get()
@@ -45,6 +67,11 @@ class Stroop extends React.Component {
 		email: this.userProfile.getEmail(),
 		token: this.user.getAuthResponse().id_token
 	}
+	/**
+	 * Initialises the component's state
+	 * 
+	 * @param {Object} props 
+	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -60,6 +87,10 @@ class Stroop extends React.Component {
 			highScore: '',
 		}
 	}
+	/**
+	 * Asynchronously retrieves game results for current user and 
+	 * sets this.state.highScore to the best value
+	 */
 	async componentDidMount() {
 		try {
 			const results = await getResults({ eMail: this.profile.email, gameID: 3 })
@@ -69,6 +100,9 @@ class Stroop extends React.Component {
 			this.setState({ highScore: 'N/A' })
 		}
 	}
+	/**
+	 * Sets state to playing state and generates first round
+	 */
 	startGame = () => {
 		this.setState({
 			playing: true,
@@ -79,6 +113,9 @@ class Stroop extends React.Component {
 		})
 		this.generateRound()
 	}
+	/**
+	 * Sets state to finished state, sends game results and settings to backend
+	 */
 	endGame = () => {
 		this.setState({
 			playing: false,
@@ -87,6 +124,9 @@ class Stroop extends React.Component {
 		})
 		sendResults(this.profile.email, 3, { Setting1: this.state.gameTime }, { Result1: this.state.score, Result2: this.state.wrongAnswers, Result3: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
+	/**
+	 * Resets state to starting state
+	 */
 	backToStart = () => {
 		this.setState({
 			playing: false,
@@ -94,6 +134,9 @@ class Stroop extends React.Component {
 			finished:false
 		})
 	}
+	/**
+	 * Sets state to countdown state
+	 */
 	getReady = () => {
 		this.setState({
 			playing: false,
@@ -101,6 +144,12 @@ class Stroop extends React.Component {
 			finished: false
 		})
 	}
+	/**
+	 * Generates a new game round by randomly selecting text color,
+	 * randomly selecting a color name (different from the first one),
+	 * then adding next random colors to an array, which is then shuffled and
+	 * used for creating color buttons
+	 */
 	generateRound = () => {
 		let currentColor = COLORS[Math.floor(Math.random() * COLORS.length)]
 		let currentColorText
@@ -122,13 +171,28 @@ class Stroop extends React.Component {
 			choiceColors: choiceColors
 		})
 	}
+	/**
+	 * Adds points for a correct answer and generates a new round
+	 * 
+	 * @param {number} points number of points to be awarded
+	 */
 	correctAnswer = (points) => {
 		this.setState((state) => ({ score: state.score + points }))
 		this.generateRound()
 	}
+	/**
+	 * Adds points for a wrong answer
+	 * 
+	 * @param {number} points number of points to be added to wrong answers
+	 */
 	wrongAnswer = (points) => {
 		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points }))
 	}
+	/**
+	 * Renders the game
+	 * 
+	 * @returns JSX.Element representing the game field
+	 */
 	render() {
 		return <>
 			<Link to='/'>Powrót</Link>

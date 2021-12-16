@@ -8,6 +8,12 @@ import styles from './threeCardMonte.module.css'
 
 const ANSWER_SCORE = 1
 
+/**
+ * Component representing a card used in game. Uses React.forwardRef 
+ * required by react-flip-move for animation
+ * 
+ * @param {{cardValue: boolean, phaseNumber: number, correctAnswerAction: Function, wrongAnswerAction: Function}} props cardValue - true or false, phaseNumber - game phase number, correctAnswerAction - function to run if cardValue === true, wrongAnswerAction - function to run if cardValue === false
+ */
 const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wrongAnswerAction }, ref) => (
 	<button
 		className={styles.card}
@@ -20,6 +26,12 @@ const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wr
 	</button>
 ))
 
+/**
+ * Component used as a grid of buttons representing cards
+ * 
+ * @param {{cards: {id: number, status: boolean}[], phaseNumber: number, correctAnswerAction: Function, wrongAnswerAction: Function}} props cards - array of objects representing cards with id and status, phaseNumber - game phase number, correctAnswerAction - function to run if card.status === true passed to cards, wrongAnswerAction - function to run if card.status === false passed to cards
+ * @returns 
+ */
 const Cards = ({ cards, phaseNumber, correctAnswerAction, wrongAnswerAction }) => {
 	const renderCards = () =>  cards.map((card) => <Card key={card.id} cardValue={card.status} phaseNumber={phaseNumber} correctAnswerAction={correctAnswerAction} wrongAnswerAction={wrongAnswerAction} />)
 	return (
@@ -37,6 +49,10 @@ const Cards = ({ cards, phaseNumber, correctAnswerAction, wrongAnswerAction }) =
 		</div>
 	)
 }
+
+/**
+ * Component representing the ThreeCardMonte game
+ */
 class ThreeCardMonte extends React.Component {
 	authInstance = window.gapi.auth2.getAuthInstance()
 	user = this.authInstance.currentUser.get()
@@ -48,6 +64,11 @@ class ThreeCardMonte extends React.Component {
 		email: this.userProfile.getEmail(),
 		token: this.user.getAuthResponse().id_token
 	}
+	/**
+	 * Initialises the component's state
+	 * 
+	 * @param {Object} props 
+	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -65,6 +86,10 @@ class ThreeCardMonte extends React.Component {
 			highScore: ''
 		}
 	}
+	/**
+	 * Asynchronously retrieves game results for current user and 
+	 * sets this.state.highScore to the best value
+	 */
 	async componentDidMount() {
 		try {
 			const results = await getResults({ eMail: this.profile.email, gameID: 4 })
@@ -74,6 +99,9 @@ class ThreeCardMonte extends React.Component {
 			this.setState({ highScore: 'N/A' })
 		}
 	}
+	/**
+	 * Sets state to playing state and generates first round
+	 */
 	startGame = () => {
 		this.setState({
 			playing: true,
@@ -85,6 +113,9 @@ class ThreeCardMonte extends React.Component {
 		})
 		this.nextRound()
 	}
+	/**
+	 * Sets state to finished state, sends game results and settings to backend
+	 */
 	endGame = () => {
 		this.setState({
 			playing: false,
@@ -93,6 +124,9 @@ class ThreeCardMonte extends React.Component {
 		})
 		sendResults(this.profile.email, 4, { Setting1: this.state.cardsNumber, Setting2: this.state.numberOfRounds, Setting3: this.state.shuffleNumber }, { Result1: this.state.score, Result2: this.state.wrongAnswers, Result3: ((this.state.score / (this.state.score + this.state.wrongAnswers)) * 100).toFixed(2) })
 	}
+	/**
+	 * Resets state to starting state
+	 */
 	backToStart = () => {
 		this.setState({
 			playing: false,
@@ -100,6 +134,9 @@ class ThreeCardMonte extends React.Component {
 			finished:false
 		})
 	}
+	/**
+	 * Sets state to countdown state
+	 */
 	getReady = () => {
 		this.setState({
 			playing: false,
@@ -107,6 +144,11 @@ class ThreeCardMonte extends React.Component {
 			finished: false
 		})
 	}
+	/**
+	 * Generates a new game round by randomly selecting the correct card 
+	 * and moving to phase 0. If the previous round was the last one, 
+	 * then ends the game instead
+	 */
 	nextRound = () => {
 		if (this.state.currentRound < this.state.numberOfRounds) {
 			let correctCardId = Math.floor(Math.random() * this.state.cardsNumber)
@@ -126,15 +168,33 @@ class ThreeCardMonte extends React.Component {
 			}))
 		} else this.endGame()
 	}
+	/**
+	 * Adds points for a correct answer and moves to phase 3
+	 * 
+	 * @param {number} points number of points to be awarded
+	 */
 	correctAnswer = (points) => {
 		this.setState((state) => ({ score: state.score + points, phaseNumber: 3 }))
 	}
+	/**
+	 * Adds points for a wrong answer and moves to phase 3
+	 * 
+	 * @param {number} points number of points to be added to wrong answers
+	 */
 	wrongAnswer = (points) => {
 		this.setState((state) => ({ wrongAnswers: state.wrongAnswers + points, phaseNumber: 3 }))
 	}
+	/**
+	 * Shuffles cards using shuffle function from lodash
+	 * Utilises a version of Fisher-Yates algorithm
+	 */
 	shuffleCards = () => {
 		this.setState((state) => ({ cards: shuffle(this.state.cards) }))
 	}
+	/**
+	 * Moves to phase 1, then shuffles cards with a 1000ms animation
+	 * Then moves to phase 2
+	 */
 	handleShuffling = () => {
 		this.setState({ phaseNumber: 1 });
 		const timer = ms => new Promise(res => setTimeout(res, ms));
@@ -145,6 +205,10 @@ class ThreeCardMonte extends React.Component {
 			}
 		})().then(() => {this.setState({ phaseNumber: 2 })})
 	}
+	/**
+	 * Renders the game
+	 * @returns JSX.Element representing the game field
+	 */
 	render() {
 		return <>
 			<Link to='/'>Powrót</Link>

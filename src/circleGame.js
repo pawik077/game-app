@@ -7,12 +7,26 @@ import styles from './circleGame.module.css'
 const CIRCLE_SCORE = 1
 const CIRCLE_NUMBER = 20
 
+/**
+ * Circle component, used as a visual representation of the object
+ * to be found during the game
+ * 
+ * @param {{tap: Function, isActive: boolean, color: string}} props tap - function to run if clicked on active circle, isActive - boolean representing active circle status, color - css argument determining the color of the circle 
+ * @returns JSX.Element representing a circular button
+ */
 const Circle = ({ tap, isActive, color }) =>
 	<button
 		className={styles.circle} style={{ backgroundColor: color}}
 		onClick={() => { if (isActive) tap(CIRCLE_SCORE) }}
 	/>
 
+/**
+ * Component used as a grid of available objects, which randomly
+ * activate during the game
+ * 
+ * @param {{tap: Function, activeId: number, activeColor: string}} props tap - onClick function passed to circles, activeId - ID of active circle, activeColor - css argument determining the color of the active circle
+ * @returns JSX.Element representing a grid of circles
+ */
 const Circles = ({ tap, activeId, activeColor }) =>
 	<div id={styles.circles}>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
@@ -21,6 +35,9 @@ const Circles = ({ tap, activeId, activeColor }) =>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
 
+/**
+ * Component representing the ItemHunt game
+ */
 class CircleGame extends React.Component {
 	authInstance = window.gapi.auth2.getAuthInstance()
 	user = this.authInstance.currentUser.get()
@@ -32,6 +49,11 @@ class CircleGame extends React.Component {
 		email: this.userProfile.getEmail(),
 		token: this.user.getAuthResponse().id_token
 	}
+	/**
+	 * Initialises the component's state
+	 * 
+	 * @param {Object} props 
+	 */
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -45,6 +67,10 @@ class CircleGame extends React.Component {
 			highScore: ''
 		}
 	}
+	/**
+	 * Asynchronously retrieves game results for current user and 
+	 * sets this.state.highScore to the best value
+	 */
 	async componentDidMount() {
 		try {
 			const results = await getResults({ eMail: this.profile.email, gameID: 1 })
@@ -54,6 +80,9 @@ class CircleGame extends React.Component {
 			this.setState({ highScore: 'N/A' })
 		}
 	}
+	/**
+	 * Sets state to playing state and generates first activeCircle
+	 */
 	startGame = () => {
 		this.setState({
 			playing: true,
@@ -63,6 +92,9 @@ class CircleGame extends React.Component {
 			activeCircleId: Math.floor(Math.random() * CIRCLE_NUMBER)
 		})
 	}
+	/**
+	 * Sets state to finished state, sends game results and settings to backend
+	 */
 	endGame = () => {
 		this.setState({
 			playing: false,
@@ -92,6 +124,9 @@ class CircleGame extends React.Component {
 		}
 		sendResults(this.profile.email, 1, { Setting1: this.state.gameTime, Setting2: colorFloat }, { Result1: this.state.score, Result2: (parseFloat(this.state.gameTime) * 1000 / this.state.score).toFixed(2) })
 	}
+	/**
+	 * Resets state to starting state
+	 */
 	backToStart = () => {
 		this.setState({
 			playing: false,
@@ -99,6 +134,9 @@ class CircleGame extends React.Component {
 			finished:false
 		})
 	}
+	/**
+	 * Sets state to countdown state
+	 */
 	getReady = () => {
 		this.setState({
 			playing: false,
@@ -106,6 +144,11 @@ class CircleGame extends React.Component {
 			finished: false
 		})
 	}
+	/**
+	 * Adds points for a correct click and generates a new activeCircle
+	 * 
+	 * @param {number} points number of points to be awarded
+	 */
 	tap = (points) => {
 		this.setState((state) => ({ score: state.score + points }))
 		let rn
@@ -113,6 +156,11 @@ class CircleGame extends React.Component {
 		while (rn === this.state.activeCircleId)
 		this.setState({ activeCircleId: rn })
 	}
+	/**
+	 * Renders the game
+	 * 
+	 * @returns JSX.Element representing the game field
+	 */
 	render() {
 		return <>
 			<Link to='/'>Powrót</Link>
