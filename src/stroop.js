@@ -138,7 +138,7 @@ class Stroop extends React.Component {
 						<h1>Badanie efektu Stroopa</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
-						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} /><br />
+						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br />
 						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
 					</div>
 				)}

@@ -12,7 +12,6 @@ class Login extends React.Component {
 		const isSignedIn = authInstance.isSignedIn.get()
 		if (isSignedIn) {
 			const user = authInstance.currentUser.get()
-			// console.log(user.getAuthResponse().id_token)
 			this.onSignIn(user)
 		}
 	}

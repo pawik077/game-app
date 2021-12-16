@@ -13,7 +13,6 @@ const Timer = ({ time, interval = 100, onEnd }) => {
 		timerRef.current = setInterval(() => setInternalTime(timeRef.current -= interval), interval)
 		return () => clearInterval(timerRef.current)
 	}, [interval])
-	//return <span>{`Time: ${internalTime}`}</span>
 	return (
 		<div id={styles.progressBar}>
 			<span id={styles.timer}>{`Pozostały czas: ${(internalTime / 1000).toFixed(1)}s`}</span>

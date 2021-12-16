@@ -122,7 +122,7 @@ class CircleGame extends React.Component {
 						<h1>Polowanie na przedmioty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
-						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })/*setGameTime(e.target.value)*/} /><br/>
+						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br/>
 						Kolor aktywnego obiektu: <select value={this.state.color} onChange={e => this.setState({ color: e.target.value })} >
 							<option value='green'>Zielony</option>
 							<option value='red'>Czerwony</option>
