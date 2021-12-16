@@ -157,7 +157,7 @@ class ThreeCardMonte extends React.Component {
 						Liczba kart: <input value={this.state.cardsNumber} onChange={e => this.setState({ cardsNumber: e.target.value })} /><br />
 						Liczba rund: <input value={this.state.numberOfRounds} onChange={e => this.setState({ numberOfRounds: e.target.value })} /><br />
 						Liczba tasowań: <input value={this.state.shuffleNumber} onChange={e => this.setState({ shuffleNumber: e.target.value })}/><br />
-						<button id={styles.startButton} onClick={/*Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null*/ this.getReady}>Start</button>
+						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.cardsNumber)) && Number.isInteger(parseFloat(this.state.numberOfRounds)) && Number.isInteger(parseFloat(this.state.shuffleNumber)) ? this.getReady : null}>Start</button>
 					</div>
 				)}
 				{this.state.countdown && (

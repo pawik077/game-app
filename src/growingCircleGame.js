@@ -163,7 +163,7 @@ class GrowingCircleGame extends React.Component {
 							<option value='yellow'>Żółty</option>
 							<option value='magenta'>Magenta</option>
 						</select>
-						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
+						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) && Number.isFinite(parseFloat(this.state.growTime)) ? this.getReady : null}>Start</button>
 					</div>
 				)}
 				{this.state.countdown && (
