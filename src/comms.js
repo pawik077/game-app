@@ -1,4 +1,5 @@
 import axios from "axios"
+import { deviceDetect } from "react-device-detect"
 const backend = process.env.REACT_APP_BACKEND
 
 /**
@@ -14,7 +15,8 @@ const sendResults = (eMail, gameID, gameSettings, gameResults) => {
 		eMail: eMail,
 		gameID: gameID,
 		gameSettings: gameSettings,
-		gameResults: gameResults
+		gameResults: gameResults,
+		deviceInfo: deviceDetect(),
 	}
 	try {
 		axios.post(`${backend}/results`, payload)	
