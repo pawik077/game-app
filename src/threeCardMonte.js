@@ -217,7 +217,12 @@ class ThreeCardMonte extends React.Component {
 					<div className={styles.welcome}>
 						<h1>Trzy karty</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
-						<h3>Najlepszy wynik: { this.state.highScore }</h3>
+						<h3>Najlepszy wynik: {this.state.highScore}</h3>
+						<div className={styles.instructions}>
+							<h3 style={{textAlign: "center"}}>INSTRUKCJA</h3>
+							Zapamiętaj pozycję karty z symbolem ✔. Następnie po kliknięciu przycisku "Tasuj karty" obserwuj przemieszczanie się kart.
+							Gdy karty się zatrzymają, wybierz właściwą kartę. Na koniec kliknij przycisk "Nowa runda".
+						</div>
 						Liczba kart: <input value={this.state.cardsNumber} onChange={e => this.setState({ cardsNumber: e.target.value })} /><br />
 						Liczba rund: <input value={this.state.numberOfRounds} onChange={e => this.setState({ numberOfRounds: e.target.value })} /><br />
 						Liczba tasowań: <input value={this.state.shuffleNumber} onChange={e => this.setState({ shuffleNumber: e.target.value })}/><br />

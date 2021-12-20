@@ -19,6 +19,12 @@
 	width: 100%;
 }
 
+.instructions {
+	display: block;
+	text-align: left;
+	margin-bottom: 1vh;
+}
+
 .countdown {
 	display: flex;
 	flex-direction: column;

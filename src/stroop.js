@@ -202,6 +202,10 @@ class Stroop extends React.Component {
 						<h1>Badanie efektu Stroopa</h1>
 						<h3>Zalogowany jako: {this.profile.name} ({this.profile.email})</h3>
 						<h3>Najlepszy wynik: { this.state.highScore }</h3>
+						<div className={styles.instructions}>
+							<h3 style={{textAlign: "center"}}>INSTRUKCJA</h3>
+							Klikaj jak najszybciej na przyciski odpowiadające kolorowi wyświetlanego tekstu. Unikaj klikania niewłaściwych przycisków.
+						</div>
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br />
 						<button id={styles.startButton} onClick={Number.isInteger(parseFloat(this.state.gameTime)) ? this.getReady : null}>Start</button>
 					</div>
