@@ -164,7 +164,7 @@ class Stroop extends React.Component {
 			while (choiceColors.includes(color))
 			choiceColors[i] = color
 		}
-		shuffle(choiceColors)
+		choiceColors = shuffle(choiceColors)
 		this.setState({
 			currentColor: currentColor,
 			currentColorText: currentColorText,
