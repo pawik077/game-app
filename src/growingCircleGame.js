@@ -63,7 +63,7 @@ class Circle extends React.Component {
 	 */
 	render() {
 		return <button
-			className={styles.circle} style={{ backgroundColor: this.props.color, width: `${this.state.size}%`, height: `${this.state.size}%` }}
+			className={styles.circle} id={this.props.isActive ? styles.activeCircle : null} style={{ backgroundColor: this.props.color, width: `${this.state.size}%`, height: `${this.state.size}%` }}
 			onClick={() => { if (this.props.isActive) this.click() }}
 		/>
 	}
@@ -79,7 +79,7 @@ class Circle extends React.Component {
 const Circles = ({ tap, activeId, activeColor, growTime }) =>
 	<div id={styles.circles}>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
-			<Circle key={id} tap={tap} isActive={id === activeId} color={id === activeId ? activeColor : 'black'} growTime={growTime}/>)}
+			<Circle key={id} tap={tap} isActive={id === activeId} color={activeColor} growTime={growTime}/>)}
 	</div>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>

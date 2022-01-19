@@ -16,7 +16,7 @@ const CIRCLE_NUMBER = 20
  */
 const Circle = ({ tap, isActive, color }) =>
 	<button
-		className={styles.circle} style={{ backgroundColor: color}}
+		className={styles.circle} id={isActive ? styles.activeCircle : null} style={{ backgroundColor: color}}
 		onClick={() => { if (isActive) tap(CIRCLE_SCORE) }}
 	/>
 
@@ -30,7 +30,7 @@ const Circle = ({ tap, isActive, color }) =>
 const Circles = ({ tap, activeId, activeColor }) =>
 	<div id={styles.circles}>
 		{new Array(CIRCLE_NUMBER).fill().map((_, id) =>
-			<Circle key={id} tap={tap} isActive={id === activeId} color={id === activeId ? activeColor : 'black'} />)}
+			<Circle key={id} tap={tap} isActive={id === activeId} color={activeColor} />)}
 	</div>
 
 const Score = ({ value }) => <div>{`Score: ${value}`}</div>
