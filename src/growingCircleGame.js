@@ -63,7 +63,7 @@ class Circle extends React.Component {
 	 */
 	render() {
 		return <button
-			className={styles.circle} id={this.props.isActive ? styles.activeCircle : null} style={{ backgroundColor: this.props.color, width: `${this.state.size}%`, height: `${this.state.size}%` }}
+			className={styles.circle} id={this.props.isActive ? styles.activeCircle : null} style={{ background: this.props.color, width: `${this.state.size}%`, height: `${this.state.size}%` }}
 			onClick={() => { if (this.props.isActive) this.click() }}
 		/>
 	}
@@ -113,7 +113,7 @@ class GrowingCircleGame extends React.Component {
 			activeCircleId: 0,
 			gameTime: '30',
 			growTime: '2',
-			color: 'green',
+			color: 'linear-gradient(45deg, rgba(0,255,0,1) 20%, rgba(0,0,255,1) 80%)',
 			highScore: ''
 		}
 	}
@@ -227,6 +227,7 @@ class GrowingCircleGame extends React.Component {
 						Czas gry: <input value={this.state.gameTime} onChange={e => this.setState({ gameTime: e.target.value })} /><br />
 						Czas przyrostu obiektu: <input value={this.state.growTime} onChange={e => this.setState({ growTime: e.target.value })}/><br/>
 						Kolor aktywnego obiektu: <select value={this.state.color} onChange={e => this.setState({ color: e.target.value })} >
+							<option value='linear-gradient(45deg, rgba(0,255,0,1) 20%, rgba(0,0,255,1) 80%)'>Gradient</option>
 							<option value='green'>Zielony</option>
 							<option value='red'>Czerwony</option>
 							<option value='blue'>Niebieski</option>
