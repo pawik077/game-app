@@ -16,13 +16,13 @@ const ANSWER_SCORE = 1
  */
 const Card = React.forwardRef(({ cardValue, phaseNumber, correctAnswerAction, wrongAnswerAction }, ref) => (
 	<button
-		className={styles.card}
+		className={`${styles.card} ${phaseNumber === 1 || phaseNumber === 2 ? styles.cardBack : styles.cardFront}`}
 		ref={ref}
 		onClick={phaseNumber === 2 ? () => {
 			if (cardValue) correctAnswerAction(ANSWER_SCORE)
 			else wrongAnswerAction(ANSWER_SCORE)
 		} : null}>
-			{phaseNumber === 1 || phaseNumber === 2 ? '?' : cardValue ? '✔' : '❌'}
+			{phaseNumber === 1 || phaseNumber === 2 ? '' : cardValue ? '✔' : '❌'}
 	</button>
 ))
 
