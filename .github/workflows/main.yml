@@ -32,9 +32,16 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/websites/game-app/
-            git fetch && git pull
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            npm install && npm run build
+            git fetch
+            output = $(git pull)
+            echo $output
+            if [[ $output == *"package.json"* ]] || [[ $output == *"package-lock.json"* ]]
+            then
+              npm install && npm run build
+            else
+              npm run build
+            fi
 
-        
+
